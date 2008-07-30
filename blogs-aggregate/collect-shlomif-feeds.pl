@@ -3,14 +3,20 @@
 use strict;
 use warnings;
 
+use Getopt::Long;
 use XML::Feed;
 use List::Util qw(min);
+use Time::HiRes;
+
+my $rand = 0;
+
+GetOptions('rand' => \$rand);
 
 my %feed_urls=
 (
     'homesite' => "http://community.livejournal.com/shlomif_hsite/data/rss",
     'tech' => "http://community.livejournal.com/shlomif_tech/data/rss",
-    'linmag' => "http://linmagazine.co.il/blog/feed/200",
+    'linmag' => "http://feeds.feedburner.com/linmagazine/blogs/200",
     'lj' => "http://shlomif.livejournal.com/data/rss",
     'perl' => "http://use.perl.org/~Shlomi%20Fish/journal/rss",
     'flickr' => "http://www.flickr.com/services/feeds/photos_public.gne?id=81969889\@N00&format=rss_200",
@@ -32,7 +38,12 @@ my @collections =
         fn => "shlomif-no-photos-blogs-aggregate",
         feeds => [qw(homesite tech lj perl linmag)],
         items => 20,
-    },  
+    },
+    {
+        fn => "shlomif-tech-aggregate",
+        feeds => [qw(tech perl)],
+        items => 10,
+    },
 );
 
 sub get_feed
@@ -65,6 +76,18 @@ sub myconvert
 }
 
 my %feeds;
+
+# If --rand is specified - sleep for a given time before reading the
+# feeds so to not overload the servers simultaneously.
+if ($rand)
+{
+    open my $in, "<", "/dev/urandom";
+    my $buf;
+    read($in, $buf, 4);
+    close($in);
+    my $l = unpack("l", $buf);
+    Time::HiRes::sleep(($l%7000)/10);
+}
 
 while (my ($id, $url) = each(%feed_urls))
 {
