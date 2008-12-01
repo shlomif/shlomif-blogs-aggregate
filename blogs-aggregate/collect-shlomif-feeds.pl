@@ -7,6 +7,7 @@ use Getopt::Long;
 use XML::Feed;
 use List::Util qw(min);
 use Time::HiRes;
+use List::MoreUtils qw(any);
 
 my $rand = 0;
 
@@ -42,6 +43,11 @@ my @collections =
     {
         fn => "shlomif-tech-aggregate",
         feeds => [qw(tech perl)],
+        items => 10,
+    },
+    {
+        fn => "shlomif-perl-aggregate",
+        feeds => [qw(perl tech_with_perl_tag)],
         items => 10,
     },
 );
@@ -94,10 +100,32 @@ while (my ($id, $url) = each(%feed_urls))
     $feeds{$id} = get_feed($id,$url);
 }
 
+sub to_array_ref
+{
+    my $v = shift;
+    return ref($v) eq "ARRAY" ? $v : [$v];
+}
+
+my $output_format = "RSS";
+
+{
+    my $tech_with_perl_tag = XML::Feed->new($output_format);
+    my @entries = grep
+        { any { $_ eq "perl" } @{to_array_ref($_->category())} }
+        ($feeds{'tech'}->entries())
+        ;
+
+    foreach my $entry (@entries)
+    {
+        $tech_with_perl_tag->add_entry($entry);
+    }
+
+    $feeds{'tech_with_perl_tag'} = $tech_with_perl_tag;
+}
+
 foreach my $col (@collections)
 {
     # Configuration for this feed.
-    my $output_format = "RSS";
     my $num_items = $col->{items};
     my $feed_link = "http://shlomif.livejournal.com/";
     my $output_file = "to-upload/$col->{fn}.xml";
