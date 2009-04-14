@@ -52,6 +52,19 @@ my @collections =
     },
 );
 
+=begin use_perl_org
+
+# Put it if and when use.perl.org is back online.
+foreach my $col (@collections)
+{
+    $col->{'feeds'} = [grep { $_ ne "perl" } @{$col->{'feeds'}}];
+}
+delete($feed_urls{'perl'});
+
+=end use_perl_org
+
+=cut
+
 sub get_feed
 {
     my ($id, $url) = @_;
@@ -100,18 +113,12 @@ while (my ($id, $url) = each(%feed_urls))
     $feeds{$id} = get_feed($id,$url);
 }
 
-sub to_array_ref
-{
-    my $v = shift;
-    return ref($v) eq "ARRAY" ? $v : [$v];
-}
-
 my $output_format = "RSS";
 
 {
     my $tech_with_perl_tag = XML::Feed->new($output_format);
     my @entries = grep
-        { any { $_ eq "perl" } @{to_array_ref($_->category())} }
+        { any { $_ eq "perl" } ($_->category()) }
         ($feeds{'tech'}->entries())
         ;
 
