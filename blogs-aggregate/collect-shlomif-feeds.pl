@@ -65,6 +65,16 @@ delete($feed_urls{'perl'});
 
 =cut
 
+sub process_feed
+{
+    my $feed = shift;
+
+    foreach my $entry ($feed->entries())
+    {
+        $entry->author("shlomif\@iglu.org.il (Shlomi Fish)");
+    }
+}
+
 sub get_feed
 {
     my ($id, $url) = @_;
@@ -74,6 +84,8 @@ sub get_feed
 
     my $url_feed = XML::Feed->parse(URI->new($url))
         or die "For feed '$url' " . XML::Feed->errstr;
+
+    process_feed($url_feed);
 
     return $url_feed;
 }
