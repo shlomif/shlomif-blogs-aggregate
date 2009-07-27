@@ -8,6 +8,7 @@ use XML::Feed;
 use List::Util qw(min);
 use Time::HiRes;
 use List::MoreUtils qw(any);
+use File::Copy qw(copy);
 
 my $rand = 0;
 
@@ -51,6 +52,12 @@ my @collections =
         feeds => [qw(perl tech_with_perl_tag)],
         items => 10,
     },
+    {
+        fn => "perl-begin",
+        feeds => [qw(tech_with_perl_begin perl_begin_cache)],
+        items => 10,
+    },
+    
 );
 
 =begin use_perl_org
@@ -126,13 +133,19 @@ while (my ($id, $url) = each(%feed_urls))
     $feeds{$id} = get_feed($id,$url);
 }
 
+$feeds{'perl_begin_cache'} = XML::Feed->parse("cache/perl-begin.rss");
+
 my $output_format = "RSS";
 
+sub filter_feed_by_category
 {
+    my $feed = shift;
+    my $category= shift;
+
     my $tech_with_perl_tag = XML::Feed->new($output_format);
     my @entries = grep
-        { any { $_ eq "perl" } ($_->category()) }
-        ($feeds{'tech'}->entries())
+        { any { $_ eq $category } ($_->category()) }
+        ($feed->entries())
         ;
 
     foreach my $entry (@entries)
@@ -140,8 +153,24 @@ my $output_format = "RSS";
         $tech_with_perl_tag->add_entry($entry);
     }
 
-    $feeds{'tech_with_perl_tag'} = $tech_with_perl_tag;
+    return $tech_with_perl_tag;
 }
+
+sub filter_feeds_feed
+{
+    my ($new, $old, $cat) = @_;
+
+    $feeds{$new} = 
+        filter_feed_by_category(
+            $feeds{$old},
+            $cat,
+        );
+    
+    return;
+}
+
+filter_feeds_feed("tech_with_perl_tag", "tech", "perl");
+filter_feeds_feed("tech_with_perl_begin", "tech", "perl-begin");
 
 foreach my $col (@collections)
 {
@@ -206,6 +235,11 @@ foreach my $col (@collections)
         print {$out} $feed_with_less_items->as_xml();
         close($out);
     }
+}
+
+if (-s "to-upload/perl-begin.xml")
+{
+    copy("to-upload/perl-begin.xml", "cache/perl-begin.rss");
 }
 
 system("bash", "upload.sh");
