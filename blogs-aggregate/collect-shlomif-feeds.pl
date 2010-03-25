@@ -79,7 +79,7 @@ sub process_feed
 
     foreach my $entry ($feed->entries())
     {
-        $entry->author("shlomif\@iglu.org.il (Shlomi Fish)");
+        $entry->author("Shlomi Fish ( shlomif\@iglu.org.il )");
     }
 }
 
@@ -176,7 +176,7 @@ foreach my $col (@collections)
 {
     # Configuration for this feed.
     my $num_items = $col->{items};
-    my $feed_link = "http://shlomif.livejournal.com/";
+    my $feed_link = "http://www.shlomifish.org/me/blogs/";
     my $output_file = "to-upload/$col->{fn}.xml";
 
     my $total_feed = XML::Feed->new($output_format) or
