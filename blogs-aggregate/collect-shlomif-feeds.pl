@@ -14,18 +14,24 @@ my $rand = 0;
 
 GetOptions('rand' => \$rand);
 
+# A workaround for an XML::Feed / XML::Atom bug. See:
+# https://rt.cpan.org/Public/Bug/Display.html?id=43004 .
+local $XML::Atom::ForceUnicode = 1;
+
 my %feed_urls=
 (
     'homesite' => "http://community.livejournal.com/shlomif_hsite/data/rss",
     'tech' => "http://community.livejournal.com/shlomif_tech/data/rss",
+    'perl' => "http://blogs.perl.org/users/shlomi_fish/atom.xml",
     'linmag' => "http://feeds.feedburner.com/linmagazine/blogs/200",
     'lj' => "http://shlomif.livejournal.com/data/rss",
-    'perl' => "http://use.perl.org/~Shlomi%20Fish/journal/rss",
     'flickr' => "http://www.flickr.com/services/feeds/photos_public.gne?id=81969889\@N00&format=rss_200",
     'fc_solve' => "http://fc-solve.blogspot.com/feeds/posts/default?alt=rss",
     'unarmed' => "http://shlomifish.livejournal.com/data/rss",
 );
 
+# 'perl' => "http://use.perl.org/~Shlomi%20Fish/journal/rss",
+#
 my @collections =
 (
     {
