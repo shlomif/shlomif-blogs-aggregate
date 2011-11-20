@@ -226,7 +226,8 @@ foreach my $col (@collections)
 
         if ($output_file)
         {
-            open $out, ">", $output_file;
+            open $out, ">", $output_file
+                or die "Cannot open '$output_file' - $!";
         }
         else
         {
