@@ -23,23 +23,24 @@ my %feed_urls=
     'perl' => "http://use.perl.org/~Shlomi%20Fish/journal/rss",
     'flickr' => "http://www.flickr.com/services/feeds/photos_public.gne?id=81969889\@N00&format=rss_200",
     'fc_solve' => "http://fc-solve.blogspot.com/feeds/posts/default?alt=rss",
+    'unarmed' => "http://shlomifish.livejournal.com/data/rss",
 );
 
 my @collections =
 (
     {
         fn => "shlomif-blogs-aggregate",
-        feeds => [qw(homesite tech linmag lj perl flickr fc_solve)],
+        feeds => [qw(homesite tech linmag lj perl flickr fc_solve unarmed)],
         items => 40,
     },
     {
         fn => "shlomif-english-blogs-aggregate",
-        feeds => [qw(homesite tech lj perl fc_solve)],
+        feeds => [qw(homesite tech lj perl fc_solve unarmed)],
         items => 20,
     },
     {
         fn => "shlomif-no-photos-blogs-aggregate",
-        feeds => [qw(homesite tech lj perl linmag fc_solve)],
+        feeds => [qw(homesite tech lj perl linmag fc_solve unarmed)],
         items => 20,
     },
     {
