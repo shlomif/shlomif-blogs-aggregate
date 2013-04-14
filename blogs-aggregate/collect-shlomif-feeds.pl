@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -64,7 +64,7 @@ my @collections =
         feeds => [qw(tech_with_perl_begin perl_begin_cache)],
         items => 10,
     },
-    
+
 );
 
 =begin use_perl_org
@@ -167,12 +167,12 @@ sub filter_feeds_feed
 {
     my ($new, $old, $cat) = @_;
 
-    $feeds{$new} = 
+    $feeds{$new} =
         filter_feed_by_category(
             $feeds{$old},
             $cat,
         );
-    
+
     return;
 }
 
@@ -204,7 +204,7 @@ foreach my $col (@collections)
 
 =begin Removed
 
-    @entries = 
+    @entries =
     (grep
         {
             (defined($subj_filter) ? ($_->title() =~ /$subj_filter/) : 1)
