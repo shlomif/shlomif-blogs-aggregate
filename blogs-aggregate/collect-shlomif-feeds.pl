@@ -88,7 +88,7 @@ sub process_feed
 
     foreach my $entry ($feed->entries())
     {
-        $entry->author("Shlomi Fish ( shlomif\@iglu.org.il )");
+        $entry->author("Shlomi Fish ( shlomif\@shlomifish.org )");
     }
 }
 
@@ -242,7 +242,10 @@ foreach my $col (@collections)
             open $out, ">&STDOUT";
         }
         binmode $out, ":utf8";
-        print {$out} $feed_with_less_items->as_xml();
+        # Remove trailing space.
+        print {$out} (
+            ($feed_with_less_items->as_xml()) =~ s#[ \t]+(\r?)$#$1#gmrs
+        );
         close($out);
     }
 }
